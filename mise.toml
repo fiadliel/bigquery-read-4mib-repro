@@ -1,0 +1,31 @@
+[tools]
+rust = "1.98.1"
+uv = "0.12.21"
+
+# Set BILLING_PROJECT to a project where you can create BigQuery read sessions,
+# for example in mise.local.toml:
+#
+# [env]
+# BILLING_PROJECT = "..."
+
+[tasks.rust]
+description = "Rust SDK: read the large `content` column (fails with OUT_OF_RANGE)"
+run = 'cargo run -q -- "${BILLING_PROJECT:?set BILLING_PROJECT}" content'
+
+[tasks.rust-control]
+description = "Rust SDK: read the small `id` column (succeeds)"
+run = 'cargo run -q -- "${BILLING_PROJECT:?set BILLING_PROJECT}" id'
+
+[tasks.python]
+description = "Python client: read the large `content` column (succeeds)"
+run = 'uv run -q python/read_rows.py "${BILLING_PROJECT:?set BILLING_PROJECT}" content'
+
+[tasks.compare]
+description = "Run the Rust and Python reads of the same column back to back"
+run = '''
+echo "=== Rust (google-cloud-bigquery)"
+mise run rust || true
+echo
+echo "=== Python (google-cloud-bigquery-storage)"
+mise run python
+'''

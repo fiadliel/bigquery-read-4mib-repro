@@ -1,0 +1,10 @@
+[package]
+name = "bigquery-read-4mib-repro"
+version = "0.1.0"
+edition = "2024"
+publish = false
+description = "Reproduces the 4 MiB gRPC receive limit in google-cloud-bigquery's Storage Read client"
+
+[dependencies]
+google-cloud-bigquery = "=0.18.0"
+tokio = { version = "1", features = ["macros", "rt"] }
